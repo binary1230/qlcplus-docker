@@ -4,9 +4,16 @@
 # Maintainer NOTE: I couldn't find an official Dockerfile for QLC, but I found a random
 # example and copied it from https://github.com/jessfraz/dockfmt/issues/6
 # which seems to reference https://github.com/djarbz/qlcplus but that appears to be a private repo :shrug:
+#
+# Also, looks like with phusion, there's a few better ways we could be doing this. use latest instructions from http://phusion.github.io/baseimage-docker/
+# for CMD and setuser
 
-# https://github.com/phusion/baseimage-docker/blob/master/Changelog.md
-FROM phusion/baseimage:0.11
+# NOTE: QT has an option to run in headless or VNC mode too, you have to select the output plugin. Test if it takes less memory (or, if we care)
+# The command we have to run is: (It's a QT plugin doing the work here)
+# qtapp -platform vnc:mode=websocket
+
+# pick version# From https://github.com/phusion/baseimage-docker/blob/master/Changelog.md
+FROM phusion/baseimage:bionic-1.0.0
 
 LABEL maintainer="Dominic Cerquetti binary1230+maintainer@gmail.com"
 
@@ -19,7 +26,7 @@ LABEL org.label-schema.build-date=$BUILD_DATE
 LABEL org.label-schema.name="binary1230/qlcplus"
 LABEL org.label-schema.description="QLC+ Docker with GUI"
 LABEL org.label-schema.url="https://www.qlcplus.org"
-LABEL org.label-schema.vcs-url="https://github.com/binary1230/qlcplus"
+LABEL org.label-schema.vcs-url="https://github.com/binary1230/qlcplus-docker"
 LABEL org.label-schema.vcs-ref=$VCS_REF
 LABEL org.label-schema.vendor="binary1230"
 LABEL org.label-schema.version=$BUILD_VERSION
@@ -42,8 +49,6 @@ ENV QLC_DEPENDS="\
                 libqt5script5 \
                 libqt5widgets5 \
                 libusb-0.1-4"
-
-# NOTE: QT has an option to run in headless mode too, you have to select the output plugin. Test if it takes less memory (or, if we care)
 
 # XVFB is used to fake an X server for testing and headless mode.
 RUN apt-get update \
